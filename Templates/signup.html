@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Signup</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm">
+        <h2 class="text-2xl font-bold mb-6 text-center">Sign-UP</h2>
+        <form
+            method="post"
+            action="{% url 'user_signup' %}"
+            class="space-y-4">
+            {% csrf_token %}
+            <div>
+                {% if error %}
+                <div id="response" class="mt-4 text-center text-sm text-red-500">Invalid Data!</div>
+                {% endif %}
+
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="username" name="username" autocomplete="off" required
+                        placeholder="Enter username"
+                        hx-get="{% url 'check_username_email' %}" 
+                        hx-trigger="keyup changed delay:1000ms"
+                        hx-target=".username-status"
+                        hx-params="username"
+                        hx-swap="innerHTML"
+                class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="username-status"></div>
+
+            <div>
+                <label for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" name="email" autocomplete="off" required
+                        placeholder="Enter your email"
+                        hx-get="{% url 'check_username_email' %}" 
+                        hx-trigger="keyup changed delay:1000ms"
+                        hx-target=".email-status"
+                        hx-params="email"
+                        hx-swap="innerHTML"
+                class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="email-status"></div>
+            
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" name="password" autocomplete="off" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="password" autocomplete="off" required
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                <div class="flex text-left">
+                    <small id="message" class="text-left text-sm mt-1 block"></small>
+                </div>
+                <div class="text-right">
+                    <input type="checkbox" id="remember" name="remember" class="border-gray rounded" onclick="togglePassword()">
+                    <small class="mr-5">Show</small>
+                </div>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                Sign Up
+            </button>
+        </form>
+        <br>
+        <small class="text-blue-600"><button hx-get="{% url 'user_login' %}" hx-trigger="click" hx-target="body" hx-swap="innerHTML">get back to login</button></small>
+    </div>
+
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+
+            const checkPasswordInput = document.getElementById("confirmPassword");
+            checkPasswordInput.type = checkPasswordInput.type === "password" ? "text" : "password";
+        }
+
+        let typingTimer;
+        const delay = 1100; 
+    
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const message = document.getElementById('message');
+    
+        function checkMatch() {
+            if (password.value === "" || confirmPassword.value === "") {
+                message.textContent = "";
+                message.className = "text-sm mt-1 block";
+                return;
+            }
+        
+            if (password.value === confirmPassword.value) {
+                message.textContent = "Passwords match";
+                message.className = "text-sm mt-1 block text-green-600";
+            } else {
+                message.textContent = "Passwords do not match";
+                message.className = "text-sm mt-1 block text-red-600";
+            }
+        }
+    
+        password.addEventListener('input', () => {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(checkMatch, delay);
+        });
+    
+        confirmPassword.addEventListener('input', () => {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(checkMatch, delay);
+        });
+    </script> 
+</body>
+</html>

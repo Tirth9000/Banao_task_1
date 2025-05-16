@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Landing Page</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-white text-gray-800">
+
+  <nav class="flex justify-between items-center p-4 shadow-md">
+    <div class="text-2xl font-bold text-blue-600">MyApp</div>
+    <div class="space-x-4">
+      <a href="{% url 'user_login' %}" class="px-4 py-2 border border-blue-600 text-blue-600 rounded hover:bg-blue-50">Login</a>
+    </div>
+  </nav>
+
+  <section class="flex flex-col items-center justify-center text-center py-20 px-6 bg-blue-50">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to MyApp</h1>
+    <p class="text-lg md:text-xl text-gray-600 mb-6 max-w-xl">Build, explore, and grow with our powerful tools designed for modern developers and creatives.</p>
+    <a href="/signup" class="bg-blue-600 text-white px-6 py-3 rounded text-lg hover:bg-blue-700">Get Started</a>
+  </section>
+
+  <footer class="text-center text-sm text-gray-500 py-6 border-t mt-10">
+    © 2025 MyApp. All rights reserved.
+  </footer>
+
+</body>
+</html>
