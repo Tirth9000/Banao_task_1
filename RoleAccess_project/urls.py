@@ -28,6 +28,7 @@ urlpatterns = [
     path('login-signup/sign-up/', UserSignup, name='user_signup'),
     path('register/', UserRegister, name='user_register'),
     path('doctor/', DoctorPage, name='doctor'),
+    path('doctor/blog/', UploadBlog, name='doctor_blog'),
     path('patient/', PatientPage, name='patient'),
     path('check-username-email/', CheckValidUser, name="check_username_email"),
     

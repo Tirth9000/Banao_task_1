@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.core.files.storage import default_storage
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.files.base import ContentFile
-from .models import UserModel
+from .models import UserModel, Blogs
 from Templates import *
 import os
 
@@ -19,7 +19,8 @@ def UserLogin(request):
         if user and check_password(password, user.password):
             request.session['username'] = user.username
             request.session['status'] = 'loggedin'
-            if user.role == 'Doctor':
+            print(user.role)
+            if user.role == 'Dr':
                 return redirect('doctor')
             else:
                 return redirect('patient')
@@ -82,9 +83,42 @@ def UserRegister(request):
 def DoctorPage(request):
     user_name = request.session.get('username')
     user = UserModel.objects.filter(username = user_name).first()
-    return render(request, 'doctor.html', {'user': user})
+    blogs = Blogs.objects.filter(author=user)
+    return render(request, 'doctor.html', {'user': user, 'blogs': blogs[::-1]})
 
 def PatientPage(request):
     user_name = request.session.get('username')
     user = UserModel.objects.filter(username = user_name).first()
-    return render(request, 'patient.html', {'user': user})
+    blogs = Blogs.objects.all()
+    return render(request, 'patient.html', {'user': user, 'blogs': blogs[::-1]})
+
+
+def UploadBlog(request):
+    user_name = request.session.get('username')
+    user = UserModel.objects.filter(username = user_name).first()
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        category = request.POST.get('category')
+        summary = request.POST.get('summary')
+        content = request.POST.get('content')
+        blog_image = request.FILES.get('image')
+        draft = request.POST.get('draft')
+
+        if blog_image:
+            file_extension = os.path.splitext(blog_image.name)[1]  
+            new_file_name = f"{user.username}_blog{file_extension}" 
+            file_path = default_storage.save(new_file_name, ContentFile(blog_image.read()))
+            
+            blog = Blogs.objects.create(
+                author = user,
+                title = title,
+                category = category,
+                summary = summary,
+                content = content,
+                blog_image = file_path,
+                draft = bool(draft)
+            )
+            blog.save()
+
+        return redirect('doctor')
+    return redirect('doctor')

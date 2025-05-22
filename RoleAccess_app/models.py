@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 # Create your models here.
 class UserModel(models.Model):
     username = models.CharField(primary_key=True, max_length=30)
-    password = models.CharField(max_length=20)
+    password = models.CharField(max_length=90)
     email = models.EmailField(unique=True, max_length=30)
     first_name = models.CharField(max_length=20, blank=True)
     last_name = models.CharField(max_length=20, blank=True)
@@ -23,3 +23,18 @@ class UserModel(models.Model):
         if self.password and not self.password.startswith('pbkdf2_'):
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
+
+class Blogs(models.Model):
+    category_choices = [('Mental Health', 'Mental Health'), ('Heart Disease', 'Heart Disease'), ('Covid19', 'Covid19'), ('Immunization', 'Immunization')]
+
+    author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    blog_image = models.FileField(upload_to='blog', blank=True)
+    category = models.CharField(max_length=50, choices=category_choices, blank=True)
+    summary = models.TextField(blank=True)
+    content = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    draft = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
