@@ -89,8 +89,8 @@ def DoctorPage(request):
 def PatientPage(request):
     user_name = request.session.get('username')
     user = UserModel.objects.filter(username = user_name).first()
-    blogs = Blogs.objects.all()
-    return render(request, 'patient.html', {'user': user, 'blogs': blogs[::-1]})
+    blogs = Blogs.objects.filter(draft=False).order_by('-created_at')
+    return render(request, 'patient.html', {'user': user, 'blogs': blogs})
 
 
 def UploadBlog(request):
@@ -102,7 +102,7 @@ def UploadBlog(request):
         summary = request.POST.get('summary')
         content = request.POST.get('content')
         blog_image = request.FILES.get('image')
-        draft = request.POST.get('draft')
+        draft = request.POST.get('draft') == 'True'
 
         if blog_image:
             file_extension = os.path.splitext(blog_image.name)[1]  
@@ -116,7 +116,7 @@ def UploadBlog(request):
                 summary = summary,
                 content = content,
                 blog_image = file_path,
-                draft = bool(draft)
+                draft = draft
             )
             blog.save()
 
